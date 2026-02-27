@@ -20,127 +20,98 @@ public class DragDropItem : MonoBehaviour
 
     void Update()
     {
-#if UNITY_EDITOR
-                
-                HandleMouse();
-#else
-        HandleTouch();
-#endif
+        HandleMouse();
     }
 
-    // ИИшная эмуляция касания для отладки
     void HandleMouse()
     {
-        // Нажатие мыши
         if (Input.GetMouseButtonDown(0))
-        {
-            
-            int itemLayerMask = 1 << LayerMask.NameToLayer("Item");
+            MouseTouch();
 
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f, itemLayerMask))
-            {
-                isDragging = true;
-                startPosition = transform.position;
-            }
-        }
-
-        // Перетаскивание
         if (isDragging && Input.GetMouseButton(0))
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
+            MouseDrag();
 
-            if (plane.Raycast(ray, out float distance))
-            {
-                Vector3 point = ray.GetPoint(distance);
-                rb.MovePosition(new Vector3(point.x, transform.position.y, point.z));
-                Debug.Log("Перетаскиваем мышью");
-            }
-        }
-
-        // Отпускание
         if (isDragging && Input.GetMouseButtonUp(0))
-        {
-            isDragging = false;
-            Debug.Log("Закончили перетаскивание мышью");
-
-            if (!placeableItem.CanBePlaced())
-            {
-                rb.MovePosition(startPosition);
-            }
-        }
+            MouseDrop();
+        
     }
 
-    void HandleTouch()
+    /*void MouseDrag()
     {
-        if (Input.touchCount == 0)
-        {
-            return;
-        }
+        
 
-        Debug.Log("More than 0");
-        // ToDo добавить на два касания кручение сцены
-        Touch touch = Input.GetTouch(0);
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (touch.phase == TouchPhase.Began)
-            TryStartDrag(touch);
-
-        if (isDragging && touch.phase == TouchPhase.Moved)
-            Drag(touch);
-
-        if (isDragging &&
-            (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled))
-            EndDrag();
-    }
-
-    void TryStartDrag(Touch touch)
-    {
-        Debug.Log("TryStartDrag");
-        // луч от камеры до позиции касания. надо думать как на двумерном экране
-        // размещать предметы трехмерно
-        Ray ray = mainCamera.ScreenPointToRay(touch.position);
-        RaycastHit hit;  // структура для инфы о столкновении ray и того, куда он попал
-
-        // тут out уже который раз встречается это аналог передачи 
-        // аргумента по ссылке как & в C++, но мы ожидаем, что во
-        // время исполнения метода переменная заполнится
-        if (Physics.Raycast(ray, out hit))  // проверка попали ли в какой-то объект
-        {
-            if (hit.transform == transform) // если попали именно в скрипта айтем
-            {
-                isDragging = true;
-                // чтоб при неверном размещении объект отправлялся в начало
-                startPosition = transform.position;
-            }
-        }
-    }
-
-    void Drag(Touch touch)
-    {
-        Debug.Log("Drag");
-        // это ИИшный код чтоб преобразовать 2д в 3д посмотрим как будет работать
-        // ToDo переделать, придумать нормальную логику
-
-        // PS работает прям ужасно
-        Ray ray = mainCamera.ScreenPointToRay(touch.position);
         Plane plane = new Plane(Vector3.up, Vector3.zero);
 
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 point = ray.GetPoint(distance);
             rb.MovePosition(new Vector3(point.x, transform.position.y, point.z));
+            Debug.Log("Перетаскиваем мышью");
+        }
+    }*/
+
+    void MouseDrag()
+    {
+        int standLayer = LayerMask.NameToLayer("Stand");
+        int placesToStand = 1 << standLayer;
+
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, placesToStand))
+        {
+            // тут я недопонимаю как получить высоту без этой хуйни
+            // ToDo исправить использовав placeableItem
+            Collider itemObject = GetComponent<Collider>();
+            // переменная для высоты объекта чтоб ровно ставить на Stand-object не вдавливать
+            float objectHeight = itemObject.bounds.extents.y;
+
+            // в point в аргументах x и z зависят от пересечения, а у еще от высоты
+            Vector3 point = hit.point + Vector3.up * objectHeight;
+
+            // в point в аргументах x и z зависят от пересечения, а у от ***
+            rb.MovePosition(point);
+        }
+        else 
+        {
+            Plane plane = new(-mainCamera.transform.forward, 
+                mainCamera.transform.position + mainCamera.transform.forward * 30f);
+
+            if (plane.Raycast(ray, out float distance))
+            {
+                Vector3 point = ray.GetPoint(distance);
+                rb.MovePosition(new Vector3(point.x, point.y, point.z));
+            }
         }
     }
-    void EndDrag()
+
+    void MouseTouch()
     {
-        Debug.Log("EndDrag");
+        int itemLayerMask = 1 << LayerMask.NameToLayer("Item");
+
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, itemLayerMask))
+        {
+            isDragging = true;
+            startPosition = transform.position;
+        }
+    }
+
+    void MouseDrop()
+    {
+        
         isDragging = false;
+        Debug.Log("Закончили перетаскивание мышью");
 
         if (!placeableItem.CanBePlaced())
         {
             rb.MovePosition(startPosition);
         }
+        
     }
 
 }

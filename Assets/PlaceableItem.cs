@@ -32,6 +32,7 @@ public class PlaceableItem : MonoBehaviour
     // allowedPlacement через список 
     public bool CanBePlaced()
     {
+        // ToDo переделать этот метод с учетом Stand Planes
         return currentZone != null &&
                currentZone.placementType == allowedPlacement;
     }
