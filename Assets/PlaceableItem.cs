@@ -6,6 +6,7 @@ public class PlaceableItem : MonoBehaviour
     // как список всех возможных разрешенных PlacementType
     public PlacementType allowedPlacement;
     public PlacementZone currentZone;
+    public bool onPlacementPlane;
 
     // вызывается если попали в зону с включенным On Trigger,
     // и передает объект коллайдера в параметр other
@@ -15,7 +16,8 @@ public class PlaceableItem : MonoBehaviour
         // пробуем получить свойство PlacementZone, и, если оно
         // существует, принимаем его значение в параметр zone
         {
-            currentZone = zone;
+             currentZone = zone;
+
         }
     }
 
@@ -33,7 +35,7 @@ public class PlaceableItem : MonoBehaviour
     public bool CanBePlaced()
     {
         // ToDo переделать этот метод с учетом Stand Planes
-        return currentZone != null &&
+        return currentZone != null && onPlacementPlane &&
                currentZone.placementType == allowedPlacement;
     }
 
