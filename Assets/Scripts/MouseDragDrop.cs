@@ -21,7 +21,7 @@ public class DragDropItemMouse : MonoBehaviour
     void Update()
     {
         HandleTouch();
-
+        /*
         // ВРЕМЕННАЯ ОТЛАДКА
         if (isDragging)
         {
@@ -30,7 +30,7 @@ public class DragDropItemMouse : MonoBehaviour
         else
         {
             Debug.Log($"🔴 Not dragging");
-        }
+        }*/
     }
 
     void HandleTouch()

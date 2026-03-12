@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 557562512185886901}
   - component: {fileID: 8329296550251793440}
   - component: {fileID: 1988799648964329176}
+  - component: {fileID: 6106382587842652622}
   m_Layer: 6
   m_Name: ItemTest 1
   m_TagString: Untagged
@@ -164,8 +165,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 530073459087516491}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2b70a6477b4b63498116b9bf05d89b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragDropItemMouse
+--- !u!114 &6106382587842652622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530073459087516491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60dd63a74c8f2bb4fba3df5dc0373f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DragDropItem
