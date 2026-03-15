@@ -47,9 +47,9 @@ public class DragDropItem : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition + touchOffset);
 
-        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+        Debug.DrawRay(ray.origin, ray.direction * 400f, Color.red, 2f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, placesToStand))
+        if (Physics.Raycast(ray, out RaycastHit hit, 400f, placesToStand))
         {
             // тут я недопонимаю как получить высоту без этой хуйни
             // ToDo исправить использовав placeableItem
@@ -73,7 +73,7 @@ public class DragDropItem : MonoBehaviour
         {
             placeableItem.onPlacementPlane = false;
             Plane plane = new(-mainCamera.transform.forward, 
-                mainCamera.transform.position + mainCamera.transform.forward * 30f);
+                mainCamera.transform.position + mainCamera.transform.forward * 100f);
 
             if (plane.Raycast(ray, out float distance))
             {
@@ -94,8 +94,8 @@ public class DragDropItem : MonoBehaviour
         int itemLayerMask = 1 << LayerMask.NameToLayer("Item");
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, itemLayerMask))
+        Debug.DrawRay(ray.origin, ray.direction * 400f, Color.red, 2f);
+        if (Physics.Raycast(ray, out RaycastHit hit, 400f, itemLayerMask))
         {
             isDragging = true;
             startPosition = transform.position;
@@ -117,6 +117,7 @@ public class DragDropItem : MonoBehaviour
 
     bool CanMoveTo(Vector3 targetPosition)
     {
+        return true;
         Collider col = GetComponent<Collider>();
 
         Vector3 center = targetPosition + col.bounds.center - transform.position;
