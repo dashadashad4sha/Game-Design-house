@@ -8,7 +8,7 @@ public class DragDropItem : MonoBehaviour
     PlaceableItem placeableItem;
 
     Vector3 startPosition;
-    bool isDragging;
+    static DragDropItem currentDragging;
 
     // Vector3 touchOffset = new Vector2(20, 30);
     // оставляю нулевой для отладки пока
@@ -20,6 +20,7 @@ public class DragDropItem : MonoBehaviour
         // в силу единственности вынесли в переменную
         rb = GetComponent<Rigidbody>();
         placeableItem = GetComponent<PlaceableItem>();
+        startPosition = transform.position;
     }
 
     void Update()
@@ -32,12 +33,15 @@ public class DragDropItem : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
             MouseTouch();
 
-        if (isDragging && Input.GetMouseButton(0))
-            MouseDrag();
+        if (currentDragging == this)
+        {
+            if (Input.GetMouseButton(0))
+                MouseDrag();
 
-        if (isDragging && Input.GetMouseButtonUp(0))
-            MouseDrop();
-        
+            if (Input.GetMouseButtonUp(0))
+                MouseDrop();
+        }
+
     }
 
     void MouseDrag()
@@ -97,26 +101,32 @@ public class DragDropItem : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, itemLayerMask))
         {
-            isDragging = true;
-            startPosition = transform.position;
+            if (hit.collider.gameObject == gameObject)
+            {
+                currentDragging = this;
+                if (placeableItem.isRightPlaced)
+                    startPosition = transform.position;
+            }
         }
     }
 
     void MouseDrop()
     {
-        
-        isDragging = false;
-        Debug.Log("Закончили перетаскивание мышью");
-
-        if (!placeableItem.CanBePlaced())
+        if (currentDragging == this && !placeableItem.CanBePlaced())
         {
             rb.MovePosition(startPosition);
         }
-        
+        else
+        {
+            placeableItem.isRightPlaced = true;
+        }
+        currentDragging = null;
+
     }
 
     bool CanMoveTo(Vector3 targetPosition)
     {
+        return true;
         Collider col = GetComponent<Collider>();
 
         Vector3 center = targetPosition + col.bounds.center - transform.position;

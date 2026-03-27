@@ -7,6 +7,7 @@ public class PlaceableItem : MonoBehaviour
     public PlacementType allowedPlacement;
     public PlacementZone currentZone;
     public bool onPlacementPlane;
+    public bool isRightPlaced;
 
     // вызывается если попали в зону с включенным On Trigger,
     // и передает объект коллайдера в параметр other
@@ -51,9 +52,9 @@ public class PlaceableItem : MonoBehaviour
     void Update()
     {
         // поменять на уменьшение непрозрачности
-        if (CanBePlaced())
+        /*if (CanBePlaced())
             rend.material.color = Color.green;
         else
-            rend.material.color = Color.red;
+            rend.material.color = Color.red;*/
     }
 }

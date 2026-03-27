@@ -2765,6 +2765,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemBox
   itemPrefabs:
   - {fileID: 530073459087516491, guid: 3e2436ca458762a4c963392e8b63c46d, type: 3}
+  - {fileID: 530073459087516491, guid: 7899cdcebf4e8c3459a7a25464a9b6ec, type: 3}
+  - {fileID: 530073459087516491, guid: a9391758c1e4cfc4bacebb39fb3107e0, type: 3}
+  - {fileID: 530073459087516491, guid: af28b1c4908834f4882d5bdc00e176c6, type: 3}
+  - {fileID: 530073459087516491, guid: e1f8d800f9e8c2040907ea65431bc8c8, type: 3}
+  - {fileID: 530073459087516491, guid: ec1e91e375f422141aeeb7e0b6fce975, type: 3}
   spawnPoint: {fileID: 2062317373}
   spawnOffset: 1.5
 --- !u!54 &1538907849
