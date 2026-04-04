@@ -8,7 +8,7 @@ public class DragDropItem : MonoBehaviour
     PlaceableItem placeableItem;
 
     Vector3 startPosition;
-    bool isDragging;
+    static DragDropItem currentDragging;
 
     // Vector3 touchOffset = new Vector2(20, 30);
     // �������� ������� ��� ������� ����
@@ -20,6 +20,7 @@ public class DragDropItem : MonoBehaviour
         // � ���� �������������� ������� � ����������
         rb = GetComponent<Rigidbody>();
         placeableItem = GetComponent<PlaceableItem>();
+        startPosition = transform.position;
     }
 
     void Update()
@@ -32,12 +33,15 @@ public class DragDropItem : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
             MouseTouch();
 
-        if (isDragging && Input.GetMouseButton(0))
-            MouseDrag();
+        if (currentDragging == this)
+        {
+            if (Input.GetMouseButton(0))
+                MouseDrag();
 
-        if (isDragging && Input.GetMouseButtonUp(0))
-            MouseDrop();
-        
+            if (Input.GetMouseButtonUp(0))
+                MouseDrop();
+        }
+
     }
 
     void MouseDrag()
@@ -47,9 +51,9 @@ public class DragDropItem : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition + touchOffset);
 
-        Debug.DrawRay(ray.origin, ray.direction * 400f, Color.red, 2f);
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 400f, placesToStand))
+        if (Physics.Raycast(ray, out RaycastHit hit, 300f, placesToStand))
         {
             // ��� � ����������� ��� �������� ������ ��� ���� �����
             // ToDo ��������� ����������� placeableItem
@@ -69,11 +73,11 @@ public class DragDropItem : MonoBehaviour
                 rb.MovePosition(targetPosition);
             }
         }
-        else 
+        else
         {
             placeableItem.onPlacementPlane = false;
-            Plane plane = new(-mainCamera.transform.forward, 
-                mainCamera.transform.position + mainCamera.transform.forward * 100f);
+            Plane plane = new(-mainCamera.transform.forward,
+                mainCamera.transform.position + mainCamera.transform.forward * 50f);
 
             if (plane.Raycast(ray, out float distance))
             {
@@ -94,25 +98,30 @@ public class DragDropItem : MonoBehaviour
         int itemLayerMask = 1 << LayerMask.NameToLayer("Item");
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(ray.origin, ray.direction * 400f, Color.red, 2f);
-        if (Physics.Raycast(ray, out RaycastHit hit, 400f, itemLayerMask))
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+        if (Physics.Raycast(ray, out RaycastHit hit, 300f, itemLayerMask))
         {
-            isDragging = true;
-            startPosition = transform.position;
+            if (hit.collider.gameObject == gameObject)
+            {
+                currentDragging = this;
+                if (placeableItem.isRightPlaced)
+                    startPosition = transform.position;
+            }
         }
     }
 
     void MouseDrop()
     {
-        
-        isDragging = false;
-        Debug.Log("��������� �������������� �����");
-
-        if (!placeableItem.CanBePlaced())
+        if (currentDragging == this && !placeableItem.CanBePlaced())
         {
             rb.MovePosition(startPosition);
         }
-        
+        else
+        {
+            placeableItem.isRightPlaced = true;
+        }
+        currentDragging = null;
+
     }
 
     bool CanMoveTo(Vector3 targetPosition)

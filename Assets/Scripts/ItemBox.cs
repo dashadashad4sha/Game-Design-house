@@ -39,7 +39,7 @@ public class ItemBox : MonoBehaviour
                 if (lastSpawnedObject == null || itemOfLastSpawnedObject.isRightPlaced)
                     SpawnItem();
             }
-                
+
         }
     }
 
